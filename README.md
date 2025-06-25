@@ -1,0 +1,1 @@
+# Tekanan-Dalam-Kehidupan-Sehari-hari
