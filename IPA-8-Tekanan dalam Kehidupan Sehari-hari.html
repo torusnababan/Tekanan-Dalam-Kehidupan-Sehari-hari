@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kuis IPA SMP Tekanan Dalam Kehidupan Sehari Hari</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    input[type="text"] {
+      width: 300px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    #timer {
+      font-weight: bold;
+      color: red;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Kuis IPA SMP</h2>
+  <h2>By: Torus Manuntun Nababan, M.Pd</h2>
+  <h2>Materi: Tekanan Dalam Kehidupan Sehari Hari</h2>
+  <!-- Form Identitas -->
+  <div id="identityForm">
+    <h3>Silakan isi identitas terlebih dahulu:</h3>
+    <label>Nama:
+      <input type="text" id="nama" required>
+    </label>
+    <label>Kelas:
+      <input type="text" id="kelas" required>
+    </label>
+    <label>Tahun Ajaran:
+      <input type="text" id="tahun" required>
+    </label>
+    <label>Nama Sekolah:
+      <input type="text" id="sekolah" required>
+    </label>
+    <button onclick="startQuiz()">Mulai Kuis</button>
+  </div>
+
+  <!-- Timer -->
+  <div id="timer" class="hidden"></div>
+
+  <!-- Form Soal -->
+  <form id="quizForm" class="hidden">
+    <div id="questionsContainer"></div>
+    <button type="button" onclick="submitQuiz()">Selesai dan Lihat Skor</button>
+  </form>
+
+  <div id="result" class="hidden"></div>
+
+  <script>
+    const questions = [
+      { question: "1. Tekanan didefinisikan sebagai...", options: ["Gaya per satuan massa", "Gaya per satuan luas", "Massa per satuan gaya", "Luas per satuan gaya"], answer: "Gaya per satuan luas" },
+    { question: "2. Satuan tekanan dalam Sistem Internasional (SI) adalah...", options: ["Joule", "Watt", "Pascal", "Newton"], answer: "Pascal" },
+    { question: "3. Alat untuk mengukur tekanan udara adalah...", options: ["Termometer", "Manometer", "Barometer", "Altimeter"], answer: "Barometer" },
+    { question: "4. Semakin kecil luas bidang tekan, maka tekanan yang dihasilkan akan...", options: ["Semakin kecil", "Semakin besar", "Tetap", "Tidak berubah"], answer: "Semakin besar" },
+    { question: "5. Contoh penerapan prinsip tekanan dalam kehidupan sehari-hari adalah...", options: ["Mengangkat galon", "Memasak nasi", "Menggunakan pisau tajam", "Menyalakan TV"], answer: "Menggunakan pisau tajam" },
+    { question: "6. Alas kaki yang lebar digunakan agar...", options: ["Tekanan besar", "Tekanan kecil", "Gaya gesek besar", "Luas kecil"], answer: "Tekanan kecil" },
+    { question: "7. Semakin dalam air, maka tekanan air akan...", options: ["Semakin kecil", "Semakin besar", "Tetap", "Hilang"], answer: "Semakin besar" },
+    { question: "8. Tekanan hidrostatis dipengaruhi oleh...", options: ["Waktu", "Luas permukaan", "Kedalaman dan massa jenis cairan", "Bentuk wadah"], answer: "Kedalaman dan massa jenis cairan" },
+    { question: "9. Satuan tekanan hidrostatis adalah...", options: ["Joule", "Watt", "Pascal", "Newton/m"], answer: "Pascal" },
+    { question: "10. Rumus tekanan hidrostatis adalah...", options: ["P = m × g", "P = F / A", "P = ρ × g × h", "P = W / t"], answer: "P = ρ × g × h" },
+    { question: "11. Alat penghisap seperti pompa air menggunakan prinsip tekanan...", options: ["Udara luar lebih kecil dari dalam", "Udara luar sama dengan dalam", "Udara luar lebih besar dari dalam", "Udara tidak berpengaruh"], answer: "Udara luar lebih besar dari dalam" },
+    { question: "12. Penerapan prinsip tekanan udara terdapat pada alat...", options: ["Kompas", "Pompa sepeda", "Termometer", "Multimeter"], answer: "Pompa sepeda" },
+    { question: "13. Tekanan pada zat padat bergantung pada...", options: ["Massa jenis zat", "Luas permukaan dan gaya", "Waktu", "Volume"], answer: "Luas permukaan dan gaya" },
+    { question: "14. Alat yang digunakan untuk mengukur tekanan darah adalah...", options: ["Barometer", "Sfigmomanometer", "Altimeter", "Amperemeter"], answer: "Sfigmomanometer" },
+    { question: "15. Pesawat terbang dilengkapi dengan kabin bertekanan agar...", options: ["Mesin tetap dingin", "Penumpang tidak kedinginan", "Penumpang bisa bernapas normal", "Menghemat bahan bakar"], answer: "Penumpang bisa bernapas normal" },
+    { question: "16. Udara bertekanan tinggi akan mengalir ke daerah...", options: ["Bersuhu tinggi", "Bertekanan lebih tinggi", "Bersuhu rendah", "Bertekanan lebih rendah"], answer: "Bertekanan lebih rendah" },
+    { question: "17. Ban kendaraan berisi udara agar...", options: ["Keras dan berat", "Kendaraan tetap seimbang", "Dapat menahan tekanan beban kendaraan", "Tidak aus"], answer: "Dapat menahan tekanan beban kendaraan" },
+    { question: "18. Perbedaan tekanan udara di pegunungan dan dataran rendah adalah...", options: ["Tekanan lebih besar di gunung", "Tekanan sama saja", "Tekanan lebih besar di dataran rendah", "Tekanan tidak berpengaruh"], answer: "Tekanan lebih besar di dataran rendah" },
+    { question: "19. Salah satu penerapan prinsip tekanan pada cairan adalah...", options: ["Katrol", "Dongkrak hidrolik", "Kompor", "Solder"], answer: "Dongkrak hidrolik" },
+    { question: "20. Jika gaya diperbesar dan luas penampang tetap, maka tekanan akan...", options: ["Mengecil", "Bertambah", "Tetap", "Berubah acak"], answer: "Bertambah" }
+  ];
+
+    let quizTimer;
+    let countdownInterval;
+    const timeLimit = 20 * 60 * 1000; // 20 menit
+
+    function startQuiz() {
+      const nama = document.getElementById('nama').value;
+      const kelas = document.getElementById('kelas').value;
+      const tahun = document.getElementById('tahun').value;
+      const sekolah = document.getElementById('sekolah').value;
+
+      if (!nama || !kelas || !tahun || !sekolah) {
+        alert("Harap lengkapi semua data identitas.");
+        return;
+      }
+
+      document.getElementById('identityForm').classList.add('hidden');
+      document.getElementById('quizForm').classList.remove('hidden');
+      document.getElementById('timer').classList.remove('hidden');
+
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = "";
+      questions.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.classList.add('question');
+        div.innerHTML = `<p>${q.question}</p>` + q.options.map(opt => `
+          <label><input type="radio" name="q${index}" value="${opt}"> ${opt}</label><br>`).join('');
+        container.appendChild(div);
+      });
+
+      // Timer otomatis submit setelah 20 menit
+      quizTimer = setTimeout(() => {
+        alert("Waktu habis! Kuis akan otomatis disubmit.");
+        submitQuiz();
+      }, timeLimit);
+
+      // Countdown display
+      let remaining = timeLimit / 1000;
+      const timerDisplay = document.getElementById('timer');
+      timerDisplay.textContent = `Sisa waktu: ${remaining} detik`;
+      countdownInterval = setInterval(() => {
+        remaining--;
+        timerDisplay.textContent = `Sisa waktu: ${remaining} detik`;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+    }
+
+    function submitQuiz() {
+      clearTimeout(quizTimer);
+      clearInterval(countdownInterval);
+
+      let score = 0;
+      questions.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected && selected.value === q.answer) {
+          score += 10;
+        }
+      });
+
+      document.getElementById('quizForm').classList.add('hidden');
+      document.getElementById('timer').classList.add('hidden');
+      const resultDiv = document.getElementById('result');
+      resultDiv.classList.remove('hidden');
+
+      const nama = document.getElementById('nama').value;
+      const kelas = document.getElementById('kelas').value;
+      const tahun = document.getElementById('tahun').value;
+      const sekolah = document.getElementById('sekolah').value;
+
+      let message = "";
+      if (score >= 70) {
+        message = "<p style='color: green;'><strong>Selamat!</strong> Anda Sudah Bisa Melanjutkan ke Materi Berikutnya.</p>";
+      } else {
+        message = "<p style='color: red;'><strong>Mohon maaf.</strong> Silakan pelajari kembali materi ini sebelum melanjutkan ke materi berikutnya.</p>";
+      }
+
+      resultDiv.innerHTML = `
+        <h3>Hasil Kuis</h3>
+        <p><strong>Nama:</strong> ${nama}</p>
+        <p><strong>Kelas:</strong> ${kelas}</p>
+        <p><strong>Tahun Ajaran:</strong> ${tahun}</p>
+        <p><strong>Sekolah:</strong> ${sekolah}</p>
+        <p><strong>Skor Anda:</strong> ${score} dari 200</p>
+        ${message}
+      `;
+    }
+  </script>
+</body>
+</html>
